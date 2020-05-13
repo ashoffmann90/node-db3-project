@@ -22,7 +22,8 @@ function findSteps(id){
     return db('schemes as sc')
     .join('steps as st', 'sc.id', 'st.scheme_id')
     .where({scheme_id: id})
-    .select('st.id', 'sc.scheme_name', 'st.step_number', 'st.instructions') 
+    .select('st.id', 'sc.scheme_name', 'st.step_number', 'st.instructions')
+    .orderBy('st.step_number')
 }
 
 function add(scheme){
@@ -33,8 +34,13 @@ function add(scheme){
     })
 }
 
-function addStep(){
-    
+function addStep(step, id){
+    const stepData = {scheme_id: id, ...step}
+    return db('steps')
+    .insert(stepData)
+    .then(id => ({
+        ...stepData, id:id[0]
+    }))
 }
 
 function update(changes, id){
